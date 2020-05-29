@@ -3,14 +3,16 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 
 class UserManager(BaseUserManager):
-    # def create_user(self, email, password=None, **extra_fields):
-    #     user = self.model(email=email, **extra_fields)
-    #     user.set_password(password)
-    #     user.save(using=self.db)
+    def create_user(self, email, password=None, **extra_fields):
+        user = self.model(email=email, password=password, **extra_fields)
+        user.save(using=self.db)
+        return user
+
     def create_superuser(self, email, password):
         user = self.model(email=email, password=password)
         user.is_superuser = True
         user.save(using=self.db)
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
