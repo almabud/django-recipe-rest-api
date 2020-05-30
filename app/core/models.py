@@ -4,7 +4,13 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("Email is required")
+        if not password:
+            raise ValueError("Password is required")
+        email = self.normalize_email(email)
         user = self.model(email=email, password=password, **extra_fields)
+        user.set_password(password)
         user.save(using=self.db)
         return user
 
@@ -25,22 +31,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
 
-    def save(self, *args, **kwargs):
-        def normalize_email(email):
-            """
-            Normalize the address by lowercasing the domain part of the email
-            address.
-            """
-            email = email or ''
-            try:
-                email_name, domain_part = email.strip().rsplit('@', 1)
-            except ValueError:
-                pass
-            else:
-                email = '@'.join([email_name, domain_part.lower()])
-            return email
-        if not self.email:
-            raise ValueError("Email is required")
-        self.email = normalize_email(self.email)
-        self.set_password(self.password)
-        super(User, self).save(*args, **kwargs)
