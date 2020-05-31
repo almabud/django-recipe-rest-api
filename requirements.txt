@@ -1,4 +1,5 @@
 Django>=3.0
 djangorestframework
 psycopg2
+Pillow
 flake8>=3.8.2

@@ -3,6 +3,7 @@ services:
   app:
     build:
       context: .
+    restart: always
     ports:
       - '8000:8000'
     volumes:
@@ -21,6 +22,7 @@ services:
       - db
   db:
     image: postgres:12.3
+    restart: always
     ports:
       - '5432:5432'
     environment:
@@ -28,4 +30,14 @@ services:
       - POSTGRES_PASSWORD=113776
       - POSTGRES_DB=postgres
 
-     
+  pg-admin:
+    image: dpage/pgadmin4:4.22
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: almabud37@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 113776
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - '3000:80'
+    links:
+      - "db:pgsql-server"
